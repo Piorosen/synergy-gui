@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Synergy_WPF"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
-        
+        Closing="Window_Closing"
         >
     <Grid>
         <Grid.ColumnDefinitions>
