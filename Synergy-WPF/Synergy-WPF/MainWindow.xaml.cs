@@ -25,6 +25,7 @@ namespace Synergy_WPF
             SetNotifycation();
 
             DataContext = viewModel = new MainViewModel();
+           
         }
 
         NotifyIcon notify = new NotifyIcon();

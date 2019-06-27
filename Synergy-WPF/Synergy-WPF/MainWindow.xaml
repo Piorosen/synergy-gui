@@ -22,10 +22,21 @@
                 <DataTemplate>
                     <Border BorderThickness="0 0 0 2"
                             BorderBrush="Black">
-                        <Grid >
-                            <TextBlock Text="{Binding Day}" />
-                            <TextBlock Text="{Binding Time}" />
-                            <TextBlock Text="{Binding Log}" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                       Text="{Binding Day}" />
+                            <TextBlock Grid.Row="0" Grid.Column="1"
+                                       Text="{Binding Time}" />
+                            <TextBlock Grid.Row="1" Grid.ColumnSpan="2"
+                                       Text="{Binding Log}" />
                         </Grid>
                     </Border>
                 </DataTemplate>

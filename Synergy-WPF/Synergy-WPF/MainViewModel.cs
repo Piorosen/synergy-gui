@@ -11,9 +11,12 @@ namespace Synergy_WPF
     {
         public ObservableCollection<MainLogModel> Log { get; private set; } = new ObservableCollection<MainLogModel>();
 
+        SynergyCoreManager core;
+
         public MainViewModel()
         {
-
+            core = new SynergyCoreManager("./synergy-core.exe", "synergy.sgc");
+            core.Run();
         }
 
     }
