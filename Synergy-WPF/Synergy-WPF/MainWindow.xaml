@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Synergy_WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        
+        >
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -13,12 +15,19 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <ListBox ItemsSource="">
+        <ListBox ItemsSource="{Binding Log}"
+                 Grid.Column="2"
+                 Width="Auto" Height="Auto">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid>
-                        
-                    </Grid>
+                    <Border BorderThickness="0 0 0 2"
+                            BorderBrush="Black">
+                        <Grid >
+                            <TextBlock Text="{Binding Day}" />
+                            <TextBlock Text="{Binding Time}" />
+                            <TextBlock Text="{Binding Log}" />
+                        </Grid>
+                    </Border>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

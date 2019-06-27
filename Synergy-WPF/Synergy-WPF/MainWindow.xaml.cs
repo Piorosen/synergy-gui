@@ -20,9 +20,12 @@ namespace Synergy_WPF
     /// </summary>
     public partial class MainWindow : Window
     {
+        MainViewModel viewModel;
+
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = viewModel = new MainViewModel();
         }
     }
 }
