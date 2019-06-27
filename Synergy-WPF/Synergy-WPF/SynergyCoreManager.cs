@@ -31,26 +31,57 @@ namespace Synergy_WPF
             };
         }
 
+        bool Stop = false;
         void loop()
         {
-            while (!SynergyCore.StandardError.EndOfStream)
+            while (true)
             {
-                var err = SynergyCore.StandardError.ReadLine();
-                var day = err.Split('T')[0].Trim('[', ']');
-                var time = err.Split('T')[1].Trim('[', ']');
-                var log = Regex.Split(err, "INFO: ")[1];
-
-                OnChanged?.Invoke(this, new MainLogModel
+                if (Stop)
                 {
-                    Day = day,
-                    Time = time,
-                    Log = log
-                });
+                    return;
+                }
+
+                try
+                {
+                    while (!SynergyCore.StandardError.EndOfStream)
+                    {
+                        var err = SynergyCore.StandardError.ReadLine();
+                        var day = err.Split('T')[0].Trim('[', ']');
+                        var time = err.Split('T')[1].Trim('[', ']');
+                        var log = err;
+
+                        OnChanged?.Invoke(this, new MainLogModel
+                        {
+                            Day = day,
+                            Time = time,
+                            Log = log
+                        });
+                    }
+                    while (!SynergyCore.StandardOutput.EndOfStream)
+                    {
+                        var err = SynergyCore.StandardError.ReadLine();
+                        var day = err.Split('T')[0].Trim('[', ']');
+                        var time = err.Split('T')[1].Trim('[', ']');
+                        var log = err;
+
+                        OnChanged?.Invoke(this, new MainLogModel
+                        {
+                            Day = day,
+                            Time = time,
+                            Log = log
+                        });
+                    }
+                }
+                catch
+                {
+                    return;
+                }
+                Task.Delay(50);
             }
         }
 
 
-        public void Run()
+        public async void Run()
         {
             synergyloop = Task.Run(() =>
             {
@@ -70,13 +101,13 @@ namespace Synergy_WPF
                     });
                 }
             });
-            synergyloop.Start();
+            await synergyloop;
         }
 
         public void Dispose()
         {
             SynergyCore.Close();
-            synergyloop.Dispose();
+            Stop = true;
         }
     }
 }

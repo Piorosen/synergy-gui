@@ -24,7 +24,7 @@ namespace Synergy_WPF
             InitializeComponent();
             SetNotifycation();
 
-            DataContext = viewModel = new MainViewModel();
+            DataContext = viewModel = new MainViewModel(this.Dispatcher);
            
         }
 
@@ -66,6 +66,11 @@ namespace Synergy_WPF
                 notify.Visible = true;
                 e.Cancel = true;
                 this.Hide();
+            }
+            else
+            {
+                viewModel.Close();
+                Environment.Exit(0);
             }
         }
     }
