@@ -56,6 +56,12 @@ namespace Synergy_WinForm
                 }
                 catch
                 {
+                    OnChanged?.Invoke(this, new MainLogModel
+                    {
+                        Day = "",
+                        Time = "",
+                        Log = "Core 강제 종료 됨."
+                    });
                     return;
                 }
                 Task.Delay(50);
@@ -89,7 +95,11 @@ namespace Synergy_WinForm
         public void Dispose()
         {
             Stop = true;
-            SynergyCore.Kill();
+            try
+            {
+                SynergyCore.Kill();
+            }
+            catch { }
         }
     }
 }
