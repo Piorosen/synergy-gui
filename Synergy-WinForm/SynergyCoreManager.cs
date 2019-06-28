@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Synergy_WPF
+namespace Synergy_WinForm
 {
     public class SynergyCoreManager : IDisposable
     {
@@ -34,32 +34,13 @@ namespace Synergy_WPF
         bool Stop = false;
         void loop()
         {
-            while (true)
+            while (!Stop)
             {
-                if (Stop)
-                {
-                    return;
-                }
-
                 try
                 {
-                    while (!SynergyCore.StandardError.EndOfStream)
-                    {
-                        var err = SynergyCore.StandardError.ReadLine();
-                        var day = err.Split('T')[0].Trim('[', ']');
-                        var time = err.Split('T')[1].Trim('[', ']');
-                        var log = err;
-
-                        OnChanged?.Invoke(this, new MainLogModel
-                        {
-                            Day = day,
-                            Time = time,
-                            Log = log
-                        });
-                    }
                     while (!SynergyCore.StandardOutput.EndOfStream)
                     {
-                        var err = SynergyCore.StandardError.ReadLine();
+                        var err = SynergyCore.StandardOutput.ReadLine();
                         var day = err.Split('T')[0].Trim('[', ']');
                         var time = err.Split('T')[1].Trim('[', ']');
                         var log = err;
@@ -71,6 +52,7 @@ namespace Synergy_WPF
                             Log = log
                         });
                     }
+                    
                 }
                 catch
                 {
@@ -78,12 +60,13 @@ namespace Synergy_WPF
                 }
                 Task.Delay(50);
             }
+            SynergyCore.Close();
         }
 
 
         public async void Run()
         {
-            synergyloop = Task.Run(() =>
+            await Task.Run(() =>
             {
                 if (SynergyCore.Start())
                 {
@@ -101,13 +84,12 @@ namespace Synergy_WPF
                     });
                 }
             });
-            await synergyloop;
         }
 
         public void Dispose()
         {
-            SynergyCore.Close();
             Stop = true;
+            SynergyCore.Kill();
         }
     }
 }
