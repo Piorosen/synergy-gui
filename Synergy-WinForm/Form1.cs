@@ -20,7 +20,7 @@ namespace Synergy_WinForm
             notifyIcon1.Icon = System.Drawing.SystemIcons.Warning;
         }
 
-        SynergyCoreManager core;
+        SynergyManager core;
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -31,7 +31,7 @@ namespace Synergy_WinForm
                 p.Kill();
             }
 
-            core = new SynergyCoreManager("./synergy/synergy-core.exe", "./synergy/synergy.sgc");
+            core = new SynergyManager("./synergy/synergy-core.exe", "./synergy/synergy.sgc");
             core.OnChanged += Core_OnChanged;
             core.Run();
         }
@@ -42,7 +42,7 @@ namespace Synergy_WinForm
             {
                 this.Invoke(new MethodInvoker(() =>
                 {
-                    if (e.Day != string.Empty && e.Time != string.Empty)
+                    if (!string.IsNullOrEmpty(e.Day) && !string.IsNullOrEmpty(e.Time))
                     {
                         listBox1.Items.Add($"{e.Day} : {e.Time}");
                     }
