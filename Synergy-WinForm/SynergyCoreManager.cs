@@ -30,54 +30,37 @@ namespace Synergy_WinForm
             };
         }
 
-        bool Stop = false;
-        void loop()
+        void Loop()
         {
-            while (!Stop)
+            while (!SynergyCore.HasExited)
             {
-                try
+                while (!SynergyCore.StandardOutput.EndOfStream)
                 {
-                    while (!SynergyCore.StandardOutput.EndOfStream)
+                    var err = SynergyCore.StandardOutput.ReadLine();
+                    int pos = err.IndexOf('T');
+                    if (pos != -1)
                     {
-                        var err = SynergyCore.StandardOutput.ReadLine();
-                        int pos = err.IndexOf('T');
-                        if (pos != -1)
-                        {
-                            var day = err.Substring(pos).Trim('[', ']');
+                        var day = err.Substring(pos).Trim('[', ']');
 
-                            var time = err.Substring(0, pos).Substring(err.IndexOf(']')).Trim('[', ']');
-                            var log = err.Substring(err.IndexOf(']'));
+                        var time = err.Substring(0, pos).Substring(err.IndexOf(']')).Trim('[', ']');
+                        var log = err.Substring(err.IndexOf(']'));
 
-                            OnChanged?.Invoke(this, new MainLogModel
-                            {
-                                Day = day,
-                                Time = time,
-                                Log = log
-                            });
-                        }
-                        else
+                        OnChanged?.Invoke(this, new MainLogModel
                         {
-                            OnChanged?.Invoke(this, new MainLogModel
-                            {
-                                Log = err
-                            });
-                        }
+                            Day = day,
+                            Time = time,
+                            Log = log
+                        });
                     }
-                    
-                }
-                catch
-                {
-                    OnChanged?.Invoke(this, new MainLogModel
+                    else
                     {
-                        Day = "",
-                        Time = "",
-                        Log = "Core 강제 종료 됨."
-                    });
-                    return;
+                        OnChanged?.Invoke(this, new MainLogModel
+                        {
+                            Log = err
+                        });
+                    }
                 }
-                Task.Delay(50);
             }
-            SynergyCore.Close();
         }
 
 
@@ -91,8 +74,7 @@ namespace Synergy_WinForm
                     {
                         Log = "Run..."
                     });
-                    loop();
-                    
+                    Loop();
                 }
                 else
                 {
@@ -106,7 +88,6 @@ namespace Synergy_WinForm
 
         public void Dispose()
         {
-            Stop = true;
             if (!SynergyCore.HasExited)
             {
                 SynergyCore.Kill();

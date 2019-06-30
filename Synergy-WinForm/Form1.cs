@@ -42,14 +42,14 @@ namespace Synergy_WinForm
             {
                 this.Invoke(new MethodInvoker(() =>
                 {
-                    listBox1.Items.Add($"{e.Day} : {e.Time}");
+                    if (e.Day != string.Empty && e.Time != string.Empty)
+                    {
+                        listBox1.Items.Add($"{e.Day} : {e.Time}");
+                    }
                     listBox1.Items.Add($"{e.Log}");
                 }));
             }
-            catch
-            {
-
-            }
+            catch { }
         }
 
         bool realClose = false;
@@ -78,13 +78,6 @@ namespace Synergy_WinForm
         private void 창열기ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             notifyIcon1.ShowBalloonTip(3000, "창 오픈", "시너지 프로그램을 열었습니다.", ToolTipIcon.Info);
-            this.Show();
-            notifyIcon1.Visible = false;
-        }
-
-        private void NotifyIcon1_DoubleClick(object sender, EventArgs e)
-        {
-            notifyIcon1.ShowBalloonTip(3000, "열림", "우헤헿", ToolTipIcon.Info);
             this.Show();
             notifyIcon1.Visible = false;
         }
