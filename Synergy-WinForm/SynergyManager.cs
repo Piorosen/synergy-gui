@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace Synergy_WinForm
 {
-    public class SynergyCoreManager : IDisposable
+    public class SynergyManager : IDisposable
     {
         readonly Process SynergyCore;
         
-        public event EventHandler<MainLogModel> OnChanged;
+        public event EventHandler<LogModel> OnChanged;
 
-        public SynergyCoreManager(string path, string config)
+        public SynergyManager(string path, string config)
         {
             SynergyCore = new Process
             {
@@ -30,10 +30,18 @@ namespace Synergy_WinForm
             };
         }
 
-        void Loop()
+        async void Loop()
         {
             while (!SynergyCore.HasExited)
             {
+                while (!SynergyCore.StandardError.EndOfStream)
+                {
+                    OnChanged?.Invoke(this, new LogModel
+                    {
+                        Log = SynergyCore.StandardError.ReadLine()
+                    });
+                }
+
                 while (!SynergyCore.StandardOutput.EndOfStream)
                 {
                     var err = SynergyCore.StandardOutput.ReadLine();
@@ -45,7 +53,7 @@ namespace Synergy_WinForm
                         var time = err.Substring(0, pos).Substring(err.IndexOf(']')).Trim('[', ']');
                         var log = err.Substring(err.IndexOf(']'));
 
-                        OnChanged?.Invoke(this, new MainLogModel
+                        OnChanged?.Invoke(this, new LogModel
                         {
                             Day = day,
                             Time = time,
@@ -54,36 +62,35 @@ namespace Synergy_WinForm
                     }
                     else
                     {
-                        OnChanged?.Invoke(this, new MainLogModel
+                        OnChanged?.Invoke(this, new LogModel
                         {
                             Log = err
                         });
                     }
                 }
+
+                await Task.Delay(50);
             }
         }
 
 
-        public async void Run()
+        public void Run()
         {
-            await Task.Run(() =>
+            if (SynergyCore.Start())
             {
-                if (SynergyCore.Start())
+                OnChanged?.Invoke(this, new LogModel
                 {
-                    OnChanged?.Invoke(this, new MainLogModel
-                    {
-                        Log = "Run..."
-                    });
-                    Loop();
-                }
-                else
+                    Log = "Run..."
+                });
+                Loop();
+            }
+            else
+            {
+                OnChanged?.Invoke(this, new LogModel
                 {
-                    OnChanged?.Invoke(this, new MainLogModel
-                    {
-                        Log = "Fail"
-                    });
-                }
-            });
+                    Log = "Fail"
+                });
+            }
         }
 
         public void Dispose()

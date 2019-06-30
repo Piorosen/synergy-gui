@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Synergy_WinForm
 {
-    public class MainLogModel
+    public class LogModel
     {
         public string Day { get; set; } = "";
         public string Time { get; set; } = "";

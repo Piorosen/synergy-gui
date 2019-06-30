@@ -36,7 +36,7 @@ namespace Synergy_WinForm
             core.Run();
         }
 
-        private void Core_OnChanged(object sender, MainLogModel e)
+        private void Core_OnChanged(object sender, LogModel e)
         {
             try
             {
