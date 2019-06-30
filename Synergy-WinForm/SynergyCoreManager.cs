@@ -11,7 +11,6 @@ namespace Synergy_WinForm
     public class SynergyCoreManager : IDisposable
     {
         readonly Process SynergyCore;
-        Task synergyloop;
         
         public event EventHandler<MainLogModel> OnChanged;
 
@@ -41,16 +40,28 @@ namespace Synergy_WinForm
                     while (!SynergyCore.StandardOutput.EndOfStream)
                     {
                         var err = SynergyCore.StandardOutput.ReadLine();
-                        var day = err.Split('T')[0].Trim('[', ']');
-                        var time = err.Split('T')[1].Trim('[', ']');
-                        var log = err;
-
-                        OnChanged?.Invoke(this, new MainLogModel
+                        int pos = err.IndexOf('T');
+                        if (pos != -1)
                         {
-                            Day = day,
-                            Time = time,
-                            Log = log
-                        });
+                            var day = err.Substring(pos).Trim('[', ']');
+
+                            var time = err.Substring(0, pos).Substring(err.IndexOf(']')).Trim('[', ']');
+                            var log = err.Substring(err.IndexOf(']'));
+
+                            OnChanged?.Invoke(this, new MainLogModel
+                            {
+                                Day = day,
+                                Time = time,
+                                Log = log
+                            });
+                        }
+                        else
+                        {
+                            OnChanged?.Invoke(this, new MainLogModel
+                            {
+                                Log = err
+                            });
+                        }
                     }
                     
                 }
@@ -76,11 +87,12 @@ namespace Synergy_WinForm
             {
                 if (SynergyCore.Start())
                 {
-                    loop();
                     OnChanged?.Invoke(this, new MainLogModel
                     {
                         Log = "Run..."
                     });
+                    loop();
+                    
                 }
                 else
                 {
@@ -95,11 +107,10 @@ namespace Synergy_WinForm
         public void Dispose()
         {
             Stop = true;
-            try
+            if (!SynergyCore.HasExited)
             {
                 SynergyCore.Kill();
             }
-            catch { }
         }
     }
 }

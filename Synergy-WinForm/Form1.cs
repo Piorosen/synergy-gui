@@ -31,7 +31,7 @@ namespace Synergy_WinForm
                 p.Kill();
             }
 
-            core = new SynergyCoreManager("./synergy-core.exe", "synergy.sgc");
+            core = new SynergyCoreManager("./synergy/synergy-core.exe", "./synergy/synergy.sgc");
             core.OnChanged += Core_OnChanged;
             core.Run();
         }
