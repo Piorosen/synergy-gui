@@ -27,7 +27,7 @@ namespace Synergy_WinForm
             var allp = Process.GetProcessesByName("synergy-core");
             foreach (var p in allp)
             {
-                listBox1.Items.Add($"{p.Id} : Synergy-core 강제 종료");
+                // listBox1.Items.Add($"{p.Id} : Synergy-core 강제 종료");
                 p.Kill();
             }
 
@@ -44,9 +44,9 @@ namespace Synergy_WinForm
                 {
                     if (!string.IsNullOrEmpty(e.Day) && !string.IsNullOrEmpty(e.Time))
                     {
-                        listBox1.Items.Add($"{e.Day} : {e.Time}");
+                        // listBox1.Items.Add($"{e.Day} : {e.Time}");
                     }
-                    listBox1.Items.Add($"{e.Log}");
+                    // listBox1.Items.Add($"{e.Log}");
                 }));
             }
             catch { }
